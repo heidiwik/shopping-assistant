@@ -30,6 +30,11 @@ namespace ShoppingAssistant
         {
             _logger.LogInformation($"ShoppingAssistant Timer trigger function executed at: {DateTime.Now}");
 
+ 
+        }
+
+        private static async Task CheckUrlList(IConfiguration _config, ILogger _logger)
+        {
             string? urlList = _config?["UrlList"] ?? throw new ArgumentNullException(nameof(urlList), "UrlList cannot be null");
             List<string> urls = new List<string>(urlList.Split(','));
 
@@ -109,7 +114,7 @@ namespace ShoppingAssistant
             return false;
         }
 
-        private async Task CallLogicApp(List<string> availableUrls)
+        private static async Task CallLogicApp(List<string> availableUrls)
         {
             var countries = new HashSet<string>();
             foreach (var url in availableUrls)
