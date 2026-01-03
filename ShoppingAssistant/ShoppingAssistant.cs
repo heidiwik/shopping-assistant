@@ -33,7 +33,7 @@ namespace ShoppingAssistant
  
         }
 
-        private static async Task CheckUrlList(IConfiguration _config, ILogger _logger)
+        private static async Task CheckUrlList(IConfiguration _config, ILogger _logger, string logicAppUrl)
         {
             string? urlList = _config?["UrlList"] ?? throw new ArgumentNullException(nameof(urlList), "UrlList cannot be null");
             List<string> urls = new List<string>(urlList.Split(','));
@@ -68,7 +68,7 @@ namespace ShoppingAssistant
 
             if (availableUrls.Count > 0)
             {
-                await CallLogicApp(availableUrls);
+                await CallLogicApp(availableUrls, _logger, logicAppUrl);
             }
         }
 
@@ -114,7 +114,8 @@ namespace ShoppingAssistant
             return false;
         }
 
-        private static async Task CallLogicApp(List<string> availableUrls)
+
+        private static async Task CallLogicApp(List<string> availableUrls, ILogger _logger, string logicAppUrl)
         {
             var countries = new HashSet<string>();
             foreach (var url in availableUrls)
@@ -135,7 +136,6 @@ namespace ShoppingAssistant
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
             _logger.LogInformation($"Calling Logic App with payload: {JsonConvert.SerializeObject(payload)}");
 
             var response = await httpClient.PostAsync(logicAppUrl, content);
